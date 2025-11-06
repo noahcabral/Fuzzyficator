@@ -283,7 +283,7 @@ class GCodeProcessor:
             return self.handle_top_solid_infill(line)
         elif line.startswith(self.lookup["type"]):
             return self.handle_type_change(line)
-        elif 'G1' in line and 'Z' in line:
+        elif 'G1' in line and 'Z' in line and not 'X' in lin and not 'Y' in line:
             return self.handle_z_movement(line)
         elif (self.in_top_solid_infill or (self.in_bridge and self.config.lower_surface)) and line.startswith('G1'):
             return self.handle_movement_in_infill(line)
@@ -411,3 +411,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

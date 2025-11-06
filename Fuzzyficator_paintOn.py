@@ -391,7 +391,7 @@ class GCodeProcessor:
             return self.handle_type_change(line)
         
         # Handle Z movements
-        elif 'G1' in line and 'Z' in line:
+        elif 'G1' in line and 'Z' in line and not 'X' in line and not 'Y' in line:
             return self.handle_z_movement(line)
         
         # Handle movement commands based on current section
@@ -840,3 +840,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
