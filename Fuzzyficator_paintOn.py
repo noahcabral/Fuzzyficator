@@ -214,6 +214,7 @@ class GCodeProcessor:
         for line in gcode_lines[:10]:
             if 'PrusaSlicer' in line: return 'prusaslicer'
             elif 'OrcaSlicer' in line: return 'orcaslicer'
+            elif 'ElegooSlicer' in line: return 'orcaslicer'
             elif 'BambuStudio' in line: return 'bambustudio'
         return None
 
@@ -788,7 +789,7 @@ def setup_logging():
     log_file_path = os.path.join(os.path.expanduser('~'), 'fuzzy_skin_script.log')
     try:
         logging.basicConfig(
-            level=logging.DEBUG,
+            level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()]
         )

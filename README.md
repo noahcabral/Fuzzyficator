@@ -10,6 +10,48 @@ Use it at your on risk.
 The Fuzzyficator script automatically reads your fuzzyskin settings and applies them to the top and bottom surfaces. 
 If you want to use the overhang fuzzyskin, enable supports. Otherwise it will end up in a failed overhang.
 
+## Desktop GUI
+
+This repo now includes a standalone desktop GUI for running the three current processors without typing command-line arguments:
+
+- `Fuzzyficator.py` for surface fuzzy skin
+- `Fuzzyficator_paintOn.py` for paint-on fuzzy skin
+- `Fuzzyficator_pattern.py` for displacement-map pattern processing
+
+The GUI also recognizes ElegooSlicer G-code and uses the Orca-style `;TYPE:Top surface` markers for top-surface processing.
+
+Run it with:
+
+`python Fuzzyficator_gui.py`
+
+On Windows you can also double-click:
+
+`launch_gui.bat`
+
+To build a standalone Windows app folder with a launchable `.exe`, run:
+
+`build_exe.bat`
+
+The built app is created at:
+
+`dist\Fuzzyficator\Fuzzyficator.exe`
+
+Copy the whole `dist\Fuzzyficator` folder if you move it to another machine; the `.exe` uses the bundled support files beside it.
+
+To build a single portable `.exe` that can be distributed by itself, run:
+
+`build_portable_exe.bat`
+
+The portable build is created at:
+
+`dist\FuzzyficatorPortable.exe`
+
+The GUI defaults to a safer workflow: choose an input G-code file, choose a separate output file, and it will copy the input before running the selected processor because the original scripts modify their target G-code in place. You can still enable direct in-place processing, with an optional timestamped `.bak` backup.
+
+Pattern mode needs image dependencies:
+
+`python -m pip install -r requirements.txt`
+
 You can overite the settings with:
 
 -resolution (use any number)
