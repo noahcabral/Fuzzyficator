@@ -19,6 +19,7 @@ The portable build is a single `.exe`; no separate Python install or support fol
 - Optional in-place processing with timestamped backup.
 - Command preview and live processing log.
 - Processing feedback when no matching movement sections were changed.
+- Original G-code line ending preservation for stricter printer/slicer import paths.
 - Single-file portable Windows build via PyInstaller.
 - ElegooSlicer detection using Orca-style `;TYPE:Top surface` markers.
 

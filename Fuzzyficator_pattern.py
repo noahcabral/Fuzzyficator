@@ -492,6 +492,27 @@ class GCodeProcessor:
                 return line.split('=')[-1].strip()
         return None
 
+    @staticmethod
+    def detect_newline(gcode_lines):
+        for line in gcode_lines:
+            if line.endswith('\r\n'):
+                return '\r\n'
+            if line.endswith('\n'):
+                return '\n'
+        return '\n'
+
+    @staticmethod
+    def normalize_newlines(gcode_lines, newline):
+        normalized = []
+        for line in gcode_lines:
+            if line.endswith('\r\n'):
+                normalized.append(line[:-2] + newline)
+            elif line.endswith('\n'):
+                normalized.append(line[:-1] + newline)
+            else:
+                normalized.append(line)
+        return normalized
+
     def process_fuzzy_skin_settings(self, gcode_lines):
         fuzzy_enabled, point_dist, thickness, support_contact_dist = (
             self._process_basic_fuzzy_settings(gcode_lines)
@@ -574,8 +595,9 @@ class GCodeProcessor:
             return None, 0.0
 
     def process_file(self):
-        with open(self.config.input_file, "r", encoding="utf-8") as f:
+        with open(self.config.input_file, "r", encoding="utf-8", newline="") as f:
             gcode_lines = f.readlines()
+        newline = self.detect_newline(gcode_lines)
         
         # Pre-scan for print bounds
         for line in gcode_lines:
@@ -656,8 +678,8 @@ class GCodeProcessor:
             processed_line = self.process_line(line)
             new_gcode.extend(processed_line)
 
-        with open(self.config.input_file, "w", encoding="utf-8") as out:
-            out.writelines(new_gcode)
+        with open(self.config.input_file, "w", encoding="utf-8", newline="") as out:
+            out.writelines(self.normalize_newlines(new_gcode, newline))
 
     def process_line(self, line):
         # Check for fuzzy section markers
