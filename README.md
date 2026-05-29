@@ -1,223 +1,91 @@
-# Fuzzyficator
-(Work In Progress) A Gcode postprocessing script to add non-planar "Fuzzyskin" to top flat surfaces and overhangs.
+# Fuzzyficator Portable GUI
 
-(Dear Youtubers if you make a Video about this, I would be glad if you could link to my channel <3 https://www.youtube.com/@tengertechnologies ) 
+This is a public fork of [TengerTechnologies/Fuzzyficator](https://github.com/TengerTechnologies/Fuzzyficator) that adds a Windows desktop GUI and a single-file portable executable.
 
-The Fuzzyficator.py works for Bambustudio, Orcaslicer and Prusaslicer. 
+The original project is a G-code post-processing script that adds non-planar fuzzy-skin displacement to top surfaces and overhangs. This fork keeps the original processors and adds a friendlier launcher for people who do not want to run command-line scripts from a slicer.
 
-Use it at your on risk.
+## Download
 
-The Fuzzyficator script automatically reads your fuzzyskin settings and applies them to the top and bottom surfaces. 
-If you want to use the overhang fuzzyskin, enable supports. Otherwise it will end up in a failed overhang.
+Download the portable Windows build from the latest release:
 
-## Desktop GUI
+[FuzzyficatorPortable.exe](https://github.com/noahcabral/Fuzzyficator/releases/latest/download/FuzzyficatorPortable.exe)
 
-This repo now includes a standalone desktop GUI for running the three current processors without typing command-line arguments:
+The portable build is a single `.exe`; no separate Python install or support folder is required.
 
-- `Fuzzyficator.py` for surface fuzzy skin
-- `Fuzzyficator_paintOn.py` for paint-on fuzzy skin
-- `Fuzzyficator_pattern.py` for displacement-map pattern processing
+## What This Fork Adds
 
-The GUI also recognizes ElegooSlicer G-code and uses the Orca-style `;TYPE:Top surface` markers for top-surface processing.
+- Desktop GUI for the surface, paint-on, and displacement-map processors.
+- Safer default workflow that copies the input G-code to a separate output file before processing.
+- Optional in-place processing with timestamped backup.
+- Command preview and live processing log.
+- Processing feedback when no matching movement sections were changed.
+- Single-file portable Windows build via PyInstaller.
+- ElegooSlicer detection using Orca-style `;TYPE:Top surface` markers.
 
-Run it with:
+## Supported Processors
 
-`python Fuzzyficator_gui.py`
+- `Fuzzyficator.py` for top/lower surface fuzzy-skin processing.
+- `Fuzzyficator_paintOn.py` for paint-on fuzzy-skin sections.
+- `Fuzzyficator_pattern.py` for grayscale displacement-map processing.
 
-On Windows you can also double-click:
+## Supported Slicer Markers
 
-`launch_gui.bat`
+The underlying processors support PrusaSlicer, OrcaSlicer, and Bambu Studio style G-code markers from upstream. This fork also recognizes ElegooSlicer G-code and treats it like Orca-style output for top-surface processing.
 
-To build a standalone Windows app folder with a launchable `.exe`, run:
+## Using The GUI From Source
 
-`build_exe.bat`
+Install dependencies:
 
-The built app is created at:
+```powershell
+python -m pip install -r requirements.txt
+```
 
-`dist\Fuzzyficator\Fuzzyficator.exe`
+Run the GUI:
 
-Copy the whole `dist\Fuzzyficator` folder if you move it to another machine; the `.exe` uses the bundled support files beside it.
+```powershell
+python Fuzzyficator_gui.py
+```
 
-To build a single portable `.exe` that can be distributed by itself, run:
+On Windows, you can also run:
 
-`build_portable_exe.bat`
+```powershell
+launch_gui.bat
+```
 
-The portable build is created at:
+## Building
 
-`dist\FuzzyficatorPortable.exe`
+Build the single-file portable EXE:
 
-The GUI defaults to a safer workflow: choose an input G-code file, choose a separate output file, and it will copy the input before running the selected processor because the original scripts modify their target G-code in place. You can still enable direct in-place processing, with an optional timestamped `.bak` backup.
+```powershell
+build_portable_exe.bat
+```
 
-Pattern mode needs image dependencies:
+Output:
 
-`python -m pip install -r requirements.txt`
+```text
+dist\FuzzyficatorPortable.exe
+```
 
-You can overite the settings with:
+Build the folder-based app distribution:
 
--resolution (use any number)
+```powershell
+build_exe.bat
+```
 
--zMin (use any number)
+Output:
 
--zMax (use any number)
+```text
+dist\Fuzzyficator\Fuzzyficator.exe
+```
 
--connectWalls (use 1 or 0)
+## Notes
 
--run (use 1 or 0)
+Fuzzyficator modifies the G-code file it is given. The GUI avoids accidental overwrites by copying your selected input file to the selected output path before running the processor, unless you explicitly enable direct in-place processing.
 
--compensateExtrusion (use 1 or 0)
+For a stronger visible effect on very short top-surface strokes, try lowering `Resolution` or disabling `Connect walls`.
 
--topSurface (use 1 or 0)
+## Upstream And License
 
--lowerSurface (use 1 or 0)
+This fork is based on [TengerTechnologies/Fuzzyficator](https://github.com/TengerTechnologies/Fuzzyficator) by Roman Tenger.
 
--fuzzySpeed (use any number)
-
--minSupportDistance (use any number)
-
--bridgeCompensationMultiplier(use any number)
-
-
-
-Add the script to your slicers postprocessing tab:
-
-`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator.py"`
-
-
-The script will use your Fuzzyskin settings if Fuzzyskin is enabled. compensateExtrusion and connectWalls default to ON.
-
-You can use the settings to override it's defaults by adding them after the script:
-
-`"C:\pathToPython\python.exe" "C:\pathToScript\Fuzzyficator.py" -run 1 -zMin 0 -zMax 0.5 -resolution 0.3 -ConnectWalls 1 -compensateExtrusion 1` etc.
-
-
-
-# General settings
-
--resolution sets the size of how to segment the Gcode
-![grafik](https://github.com/user-attachments/assets/ec9a2832-ebee-4b15-a821-e848d71073ec)
-
--zMin and zMax set the minimal and maximal Z displacement of the segments.
-![grafik](https://github.com/user-attachments/assets/0e9c0c30-0c61-4df0-ae76-dbe2a4c6e381)
-
--connectWalls sets wether the first segment should not be displaced. 
-![grafik](https://github.com/user-attachments/assets/a2874fcf-e2fa-4440-a6c1-b58d4f6bc080)
-
--run enables or disables the script
-
--compensateExtrusion compensates extrusion values for the added distance 
-
--fuzzySpeed sets the speed for the fuzzy sections in mm/min
-
--topSurface enables or disables top surface processing
-
--lowerSurface enables or disables overhang processing 
-
--bridgeCompensationMultiplier is a factor to multiply the extrusion compensation on overhang layers
-
--minSupportDistance sets the minimal distance to the support interface 
-
-
-# Fuzzyficator Paint-On
-
-(experimental) A Gcode postprocessing script to add paint-on "Fuzzyskin" to Prusaslicer Orcaslicer and Bambustudio.
-
-
-
-The Fuzzyficator_paintOn.py works for Bambustudio, Orcaslicer and Prusaslicer. 
-
-Use it at your on risk.
-
-The Fuzzyficator script only runs if fuzzyskin is disabled in the slicer. 
-You have to set some things up in the slicers first. I'm still working on this page so for now check the video linked below. 
-
-You can overite the settings with:
-
--resolution (use any number)
-
--zMin (use any number)
-
--zMax (use any number)
-
--connectWalls (use 1 or 0)
-
--run (use 1 or 0)
-
--compensateExtrusion (use 1 or 0)
-
--topSurface (use 1 or 0)
-
--lowerSurface (use 1 or 0)
-
--fuzzySpeed (use any number)
-
--minSupportDistance (use any number)
-
--bridgeCompensationMultiplier(use any number)
-
-
-For paint-on only:
-
--xy_thickness (use any number)
-
--xy_point_dist (use any number)
-
-
-
-
-
-# Video Guide
-
-
-
-[![Thumnbnail](http://img.youtube.com/vi/cNkHfydnUCI/0.jpg)](http://www.youtube.com/watch?v=cNkHfydnUCI)
-
-
-# Fuzzyficator Pattern
-
-(experimental) A Gcode postprocessing script to add paint-on Displacement maps to Prusaslicer Orcaslicer and Bambustudio.
-
-
-
-The Fuzzyficator_pattern.py works for Bambustudio, Orcaslicer and Prusaslicer. 
-
-Use it at your on risk.
-
-You will need to have a displacement map for it to work.
-You have to set some things up in the slicers first. I'm still working on this page so for now check the video linked below. 
-
-You need to set:
-
--run 1
-
--displacement_map Path\to\displacementMap.png
-
-# Video Guide
-
-# Old standalone version (Do not use anymore)
-
-Only for Prusaslicer. Left in the repo because of the Youtube tutorial. 
-
-You can run it with 4 parameters:
-
-1: float:FuzzyResolution
-
-2: float:z_min_displacement
-
-3: float:z_max_displacement
-
-4: bool:ensure_first_z_zero
-
-FuzzyResolution sets the size of how to segment the Gcode
-![grafik](https://github.com/user-attachments/assets/ec9a2832-ebee-4b15-a821-e848d71073ec)
-
-z_min_displacement and z_max_displacement set the minimal and maximal Z displacement of the segments.
-![grafik](https://github.com/user-attachments/assets/0e9c0c30-0c61-4df0-ae76-dbe2a4c6e381)
-
-ensure_first_z_zero sets wether the first segment should not be displaced
-![grafik](https://github.com/user-attachments/assets/a2874fcf-e2fa-4440-a6c1-b58d4f6bc080)
-
-So to run the script with the following settings: FuzzyResolution: 0.3, z_min_displacement 0, z_max_displacement: 0.5, ensure_first_z_zero: 1
-
-Run: `python fuzzyficator.py 0.3 0 0.5 1` in your console.
-
-The gcode file must be in the same directory and must be named input.gcode
+The project is licensed under the GNU General Public License v3.0 or later. See [LICENSE](LICENSE).
